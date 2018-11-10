@@ -106,7 +106,11 @@ function getRandom() {
 
 friends.push(animals[getRandom()].name);
 //console.log(friends);
-animal.friends = friends;
+//console.log(animals);
+duck.friends = friends;
+
+//console.log(duck);
+//console.log(cat);
 
 
 
