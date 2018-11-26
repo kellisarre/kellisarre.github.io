@@ -72,12 +72,14 @@ function reverseArrayInPlace(array) {
 function arrayToList(array) {
   let list = {};
   for (let i = array.length - 1; i > -1; i--){
+    // if we are on the last loop iteration, do this format
     if (i === array.length - 1) {
       list.value = array[i];
       list.rest = null;
+    // else use this format to nest another object
     } else {
       list = { value: array[i], rest: list };
-      }
+    }
   }
   return list;
 }
@@ -85,9 +87,17 @@ function arrayToList(array) {
 ////////////////////////////////////////////////////////////////////////////////
 // listToArray /////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-function listToArray() {
-
+// turns nested objects of a list into an array
+function listToArray(list) {
+  let result = [];
+  
+  // the innermost object has list set to null, which will break the loop
+  while (list) {
+    result.push(list.value);
+    list = list.rest;
+  }
+  
+  return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,21 +106,27 @@ function listToArray() {
 /*  takes an element and a list and creates a new list that adds the element to
 the front of the input list */
 
-function prepend() {
-
+function prepend(value, list) {
+  return { value, rest: list };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // nth /////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-/* takes a list and a number and returns the element at the given position
+/* If you haven’t already, also write a recursive version of nth.
+
+Takes a list and a number and returns the element at the given position
 in the list (with zero referring to the first element) or undefined when there is
-no such element.
+no such element. */
 
-If you haven’t already, also write a recursive version of nth. */
 
-function nth() {
-
+function nth(list, n) {
+  if (!list)
+    return undefined;
+  else if (n == 0)
+    return list.value;
+  else
+    return nth(list.rest, n - 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,17 +146,57 @@ you have to take one silly exception into account: because of a historical
 accident, typeof null also produces "object".
 
 The Object.keys function will be useful when you need to go over the properties
-of objects to compare them.
+of objects to compare them. */
 
-needs to be recursive to access the inner objects*/
+// Needs to be recursive to access the inner objects, but I seem to be exceeding the callstack
+// Don't really understand the directions 
+
+// Oh, I get it. You have to do deep comparisons for objects because of copy-by-reference.
+// Identical objects, when compared to one another, will return false if they are not
+// referencing the same object in memory.
 
 function deepEqual(val1, val2) {
-  if (val1 === val2) {
-    return true;
-  //} else if (val1 !== null || val2 !== null ||) {
-    
+  // if values are the same reference, return true
+  if (val1 === val2) return true;
+  // if the values are not objects / are arrays / are null, a deep comparison is not needed
+  if ((typeof val1 !== "object" || val1 === null) || (typeof val2 !== "object" || val2 === null)) {
+    return false;
   }
-}
+  // comparing an array of both objects' keys to see if they are the same
+  let keysin1 = 0, keysin2 = 0;
+  
+  for (let key in val1) {keysin1 += 1;}
+  for (let key in val2) {
+    keysin2 += 1;
+    
+    if (!(key in val1) || !deepEqual(val1[key], val2[key])) {return false;}
+  }
+  
+  return keysin1 === keysin2;
+  
+  // if (valkeys1.length === valkeys2.length) { 
+  //   for (let key in val2) { 
+  //     if (!(key in val1) || !deepEqual(val1[key], val2[key])) {
+  //       console.log(key);
+  //       return false;
+  //     }
+  //   }
+  // }
+  // //return false;
+  // return valkeys1 === valkeys2;
+} // return true only if the two args are the same value or are objects with the same properties
+
+
+/* Use Object.keys to go over the properties. You need to test whether both objects
+have the same set of property names and whether those properties have identical values.
+One way to do that is to ensure that both objects have the same number of properties 
+(the lengths of the property lists are the same). And then, when looping over one of 
+the object’s properties to compare them, always first make sure the other actually has 
+property by that name. If they have the same number of properties and all properties 
+in one also exist in the other, they have the same set of property names.
+
+Returning the correct value from the function is best done by immediately returning
+false when a mismatch is found and returning true at the end of the function. */
 
 ////////////////////////////////////////////////////////////////////////////////
 // DON'T REMOVE THIS CODE //////////////////////////////////////////////////////

@@ -13,6 +13,7 @@
 structure:
 if (condition is true) {do this;} */
 
+
 ///// 2) else-if statement /////
 /* OPTIONAL addition to an if statement chain
 which will execute code only when the if statement condition is false 
@@ -21,6 +22,7 @@ and the else-if statement condition is true
 structure:
 if (condition is true) {do this;}
 else if (this condition is true) {do this instead;} */
+
 
 ///// 3) else statement /////
 /* a default code block which runs when the IF and ELSE-IF conditions are not met 
@@ -32,16 +34,16 @@ else {default to this;}
 example: */
 var color = "grey";
 
-if (color === "red") {return "red";}
-else if (color === "blue") {return "blue";}
-else {return "that's a rather boring colour";}
+if (color === "red") {console.log("red");}
+else if (color === "blue") {console.log("blue");}
+else {console.log("that's a rather boring colour...");}
 
 
 //// 4) switch statement //// 
 /* decides what case to run based on the expression evaluated in the () 
 code will stop when it encounters BREAK statement */
 
-const cat = "black";
+var cat = "black";
 
     switch (cat) {
         case "calico":

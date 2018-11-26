@@ -201,14 +201,13 @@ _.indexOf = function(array, value) {
  *   use _.each in your implementation
  */
 
-_.filter = function(array, action) {
+_.filter = function(array, test) {
     let newArray = [];
-    // perform action on each element in <array> 
-    for (let i = 0; i < array.length; i++) {
-        if (action(array[i], i, array)) {
-            newArray.push(array[i]);
+    _.each(array, (element, i, array) => {
+        if (test(element, i, array)) {
+            newArray.push(element);
         }
-    }
+    });
     return newArray;
 }
 
@@ -226,14 +225,14 @@ _.filter = function(array, action) {
  *   _.reject([1,2,3,4,5], function(e){return e%2 === 0}) -> [1,3,5]
  */
 
-_.reject = function(array, callback) {
+_.reject = function(array, test) {
     let newArray = [];
     // perform action on each element in <array> 
-    for (let i = 0; i < array.length; i++) {
-        if (callback(array[i], i, array) === false) {
-            newArray.push(array[i]);
+    _.each(array, (element, i, array) => {
+        if (test(element, i, array) === false) {
+            newArray.push(element);
         }
-    }
+    });
     return newArray;
 }
 
@@ -256,13 +255,13 @@ _.reject = function(array, callback) {
 }
 */
 
-_.partition = function(array, callback) {
+_.partition = function(array, test) {
     let truthyArray = [];
     let falseyArray = [];
 
     _.each(array, function(element, i, array) {
         //get access to each e;lement one at a time
-        if (callback(element, i, array)) {
+        if (test(element, i, array)) {
             truthyArray.push(element);
         }
         else {
@@ -321,19 +320,24 @@ _.unique = function(array) {
 
 _.map = function(collection, action) {
     let newArray = [];
-        // if collection is an array
-        if (Array.isArray(collection)) {
-            for (let i = 0; i < collection.length; i++) {
-                newArray.push(action(collection[i], i, collection));
-            }
-
-        }
-        // if collection is an object
-        else if (!Array.isArray(collection)) {
-            for (var key in collection) {
-                newArray.push(action(collection[key], key, collection))
-            }
-        }
+        // // if collection is an array
+        // if (Array.isArray(collection)) {
+        //     for (let i = 0; i < collection.length; i++) {
+        //         newArray.push(action(collection[i], i, collection));
+        //     }
+        // }
+        
+        // // if collection is an object
+        // else if (!Array.isArray(collection)) {
+        //     for (var key in collection) {
+        //         newArray.push(action(collection[key], key, collection))
+        //     }
+        // }
+        
+    _.each(collection, (element, i, collection) => {
+        newArray.push(action(element, i, collection));
+    });
+        
     return newArray; 
 }
 
@@ -373,20 +377,14 @@ _.pluck = function(arrayOfObjects, property) {
  */
 
 _.contains = function(array, value) {
-    if (value !== undefined) {
+    if (_.indexOf(array, value) === -1) {
         // return true if array contains value
-        for (let i = 0; i < array.length; i++) {
-            if (array[i] === value) {
-                return true;
-            }
-        }
-        return false;
-        // return false otherwise
-    }
-    else {
         return false;
     }
+    return true;
 }
+
+
 /** _.every()
  * Arguments:
  *   1) A collection
@@ -417,12 +415,12 @@ of elements of empty collections.
 
  */
 
-_.every = function(collection, action) {
-  if (action !== undefined) {
+_.every = function(collection, falseyTest) {
+  if (falseyTest !== undefined) {
     // loop through array elements and return false if loop hits a falsey
     if (Array.isArray(collection)) {
       for (let i = 0; i < collection.length; i++) {
-        if (action(collection[i], i, collection) === false) {
+        if (falseyTest(collection[i], i, collection) === false) {
             return false;
         }
       }
@@ -431,7 +429,7 @@ _.every = function(collection, action) {
     // loop through object keys and return false is loop hits a falsey
     else if (_.typeOf(collection) === "object") {        
         for (var key in collection) {
-            if (action(collection[key], key, collection) === false) {
+            if (falseyTest(collection[key], key, collection) === false) {
                 return false;
             }
         }
@@ -471,12 +469,12 @@ _.every = function(collection, action) {
  *   _.some([1,2,3], function(e){return e % 2 === 0}) -> true
  */
 
-_.some = function(collection, action) {
-    if (action !== undefined) {
+_.some = function(collection, truthyTest) {
+      if (truthyTest !== undefined) {
     // loop through array elements and return true if loop hits a truthy
     if (Array.isArray(collection)) {
       for (let i = 0; i < collection.length; i++) {
-        if (action(collection[i], i, collection)) {
+        if (truthyTest(collection[i], i, collection)) {
             return true;
         }
       }
@@ -485,7 +483,7 @@ _.some = function(collection, action) {
     // loop through object keys and return true if loop hits a truthy
     else if (_.typeOf(collection) === "object") {        
         for (var key in collection) {
-            if (action(collection[key], key, collection)) {
+            if (truthyTest(collection[key], key, collection)) {
                 return true;
             }
         }
@@ -524,21 +522,17 @@ _.some = function(collection, action) {
  * 
  SeT the SeeD to wHat U nEEd */
 
-_.reduce = function(array, callback, seed) {
-    // set seed to first element in array if left undefined
-
-
-    console.log(seed);
-    //accumulator
-    for (let i = 0; i < array.length; i++) {
+_.reduce = function(array, accumulatorAsFunc, seed) {
+    _.each(array, (element, i, array) => {
         if (seed === undefined) {
             seed = array[0];
         } else {        
-        seed = callback(seed, array[i], i);
+        seed = accumulatorAsFunc(seed, element, i);
         }
-    }
+    });
     return seed;
 }
+
 
 /** _.extend()
  * Arguments:
@@ -556,9 +550,9 @@ _.reduce = function(array, callback, seed) {
  */
  
  _.extend = function(obj1, ...objs) {
-    for (let i = 0; i < objs.length; i++) {
+    _.each(objs, (obj, i, objs) => {
         // loop through objs arguments
-        for (var key in objs[i]) {
+        for (var key in obj) {
             // if objs[i] has a property that obj1 does not, add the property to obj1
             if (!obj1.hasOwnProperty(key)) {
                 obj1[key] = objs[i][key];
@@ -567,7 +561,7 @@ _.reduce = function(array, callback, seed) {
                 obj1[key] = objs[i][key];
             }
         }
-    }
+    });
     return obj1;
  }
 

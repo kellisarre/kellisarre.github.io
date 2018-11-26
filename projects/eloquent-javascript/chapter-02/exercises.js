@@ -51,21 +51,25 @@ When you have a program that generates this pattern, define a binding size = 8
 and change the program so that it works for any size, outputting a grid of the
 given width and height.*/
 
-function drawChessboard(boardSize) {
-  // let board = "";
+// use two counters; one to track width and one to track height. 
+// outer loop will control the board height and loop after the inner loop's string is built
+
+function drawChessboard(size) {
+  let board = "";
   
-  // for (let i = 0; i < boardSize; i++) {
-  //   if (board[i - 1] === "#") {
-  //     board += " ";
-  //   } else {
-  //   board += "#";
-  //   }
-  // }
-  // console.log(board);
-  // // start oddLineNum string with a space
-  
-  // // start evenLineNum string with a #
-  // // join together with newline /n between them
+  // outer loop to repeat the line
+  for (let height = 0; height < size; height++) {
+    // inner loop to create the pattern.
+    for (let width = 0; width < size; width++) {
+      if ((height + width)%2 === 0) {
+        board += " ";
+      } else {
+          board += "#";
+      }
+    }
+    board += "\n";
+  }
+  console.log(board);
 }
 
 

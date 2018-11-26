@@ -34,6 +34,21 @@ var yetAnotherFunctionName = (parameter1, parameter2) =>  parameter1 + parameter
 
 yetAnotherFunctionName(1,2); // returns 3
 
+// functions don't nessesarily need parameters
+let upperA = "a".toUpperCase(); // returns "A"
+
+// sometimes, parameters are optional
+let myString = "I like cats";
+
+let myNewString = myString.slice(7); // returns "cats"
+
+let myNewerString = myString.slice(0, 7); // returns "I like "
+// the second argument for .slice(), which indicates where to end the slice, is optional
+
+// actually, both of the arguments are optional
+let myNewestString = myString.slice() // returns "I like cats", a complete front-to-end copy of the string
+
+
 // CLOSURE is "a combination of a function and the lexical environment in which that function was created" (MDN)
 // nested functions can use parent function's variables even after parent function has returned
 
